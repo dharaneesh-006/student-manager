@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Manager</title>
+</head>
+<body>
+
+<h1>Student Manager</h1>
+
+<h2>Add Student</h2>
+<input type="text" id="name" placeholder="Name">
+<input type="email" id="email" placeholder="Email">
+<input type="number" id="marks" placeholder="Marks">
+<button onclick="addStudent()">Add</button>
+
+<h2>All Students</h2>
+<button onclick="loadStudents()">Load Students</button>
+
+<ul id="studentList"></ul>
+
+<script>
+
+    function addStudent() {
+        const student = {
+            name: document.getElementById("name").value,
+            email: document.getElementById("email").value,
+            marks: parseInt(document.getElementById("marks").value)
+        };
+
+        fetch('/students', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(student)
+        })
+            .then(() => {
+                alert("Student Added!");
+                loadStudents();
+            });
+    }
+
+    function loadStudents() {
+        fetch('/students')
+            .then(res => res.json())
+            .then(data => {
+                const list = document.getElementById("studentList");
+                list.innerHTML = "";
+
+                data.forEach(s => {
+                    const li = document.createElement("li");
+                    li.innerText = s.name + " | " + s.email + " | Marks: " + s.marks;
+                    list.appendChild(li);
+                });
+            });
+    }
+
+</script>
+
+</body>
+</html>
